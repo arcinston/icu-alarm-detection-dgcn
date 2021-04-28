@@ -1,0 +1,31 @@
+metadata_version: 1
+name: Intensive Care Unit False AlarmIdentification based on ConvolutionNeural Network
+description: In the intensive care unit(ICU), excessive false alarms burden medical staff greatly, and cause a waste of medical resources as well. In order to alleviate false alarming in ICU, we constructed classification models based on convolutional neural networks, which can directly deal with time series and avoid manually extracting features. Combining with grouping strategy, we tried two basic network structures, i.e. deep group convolutional neural network(DGCN) and embedded deep group convolutional network(EDGCN). After that, based on EDGCN, which was proved better, ensemble networks were constructed to elevate the performance further. Considering of the limited sample size, various data expansions were also tried. For comparison, we used a widely adopted index  ‘Score’, \which is defined as 100(TP+TN)/(TP+TN+FP+5FN), as performance evaluation. Finally, we tested our model in the online sandbox, and got a score of 80.68. Although it is slightly lower than the best scores that have been reported, our models are end-to-end, which means the original time series can be automatically mapped into a binary output, without manual feature extraction. In addition, the innovative adoption of group convolution  makes full use of information from multi-channel signals. Besides, this work provides ideas for relating network parameter selection with physiological or physical natures of signals. In the end, after further discussion, we also proposed potential elevation solutions.
+tags:
+- 12-lead-ecg
+- ecg
+- machine-learning
+- physiological-signal-processing
+- physionet2015
+authors:
+- name: Qiang Yu
+  affiliations:
+  - name: Nanjing University
+- name: Xiaoling Huang
+  affiliations:
+  - name: Nanjing University
+- name: Cheng Wang
+  affiliations:
+  - name: Nanjing University
+- name: Jing Xi
+  affiliations:
+  - name: Nanjing University
+- name: Ying Chen
+  affiliations:
+  - name: Nanjing University
+- name: Weifeng Li
+  affiliations:
+  - name: Nanjing University
+- name: Yun Ge
+  affiliations:
+  - name: Nanjing University
