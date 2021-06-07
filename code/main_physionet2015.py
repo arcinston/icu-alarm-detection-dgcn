@@ -357,10 +357,10 @@ if __name__ == '__main__':
     all_alarm_type = ['Ventricular_Tachycardia', 'Tachycardia', 'Ventricular_Flutter_Fib', 'Bradycardia',
                       'Asystole']
 
-    exp_single_model_cross_val("dgcn")
-    exp_single_model_cross_val("edgcn")
-    exp_combined_model_cross_val("edgcn")
+    # exp_single_model_cross_val("dgcn")
+    # exp_single_model_cross_val("edgcn")
+    # exp_combined_model_cross_val("edgcn")
     # tmp_dgcn()
-    # tmp_edgcn()
+    tmp_edgcn()
 
     sys.exit(0)

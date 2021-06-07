@@ -9,11 +9,11 @@ class Opt:
 
     def base_setting(self):
         self.batch_size = 64
-        self.load_people_size = 256
+        self.load_people_size = 64
         self.input_nc = 2
         self.input_length = 2500
         self.lr = 1e-4
-        self.max_epoch = 2
+        self.max_epoch = 400
         self.max_increase_epoch = 80
         self.use_cross_val = False
         self.np_to_seed = 1024  # random seed for numpy and pytorch
