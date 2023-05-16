@@ -32,7 +32,7 @@ def log_cv_results(res_dict, exp_name):
             print(stb)
             log_file.write(str(stb) + '\n')
 
-            tmp = np.array(res)[:, 2:7].astype(np.int)
+            tmp = np.array(res)[:, 2:7].astype(np.int32)
             a, tp, tn, fp, fn = tmp.sum(axis=0)
             acc, tpr, tnr, ref_score, sc = compute_score(tp, fp, tn, fn)
             table.add_row([exp_name, alarm, a, tp, tn, fp, fn, acc, tpr, tnr, ref_score, sc])

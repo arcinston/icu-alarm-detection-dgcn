@@ -13,8 +13,8 @@ class Opt:
         self.input_nc = 2
         self.input_length = 2500
         self.lr = 1e-4
-        self.max_epoch = 400
-        self.max_increase_epoch = 80
+        self.max_epoch = 8
+        self.max_increase_epoch = 2
         self.use_cross_val = False
         self.np_to_seed = 1024  # random seed for numpy and pytorch
         self.model_name = 'dgcn'  # /deep_modified_embedded
@@ -48,7 +48,7 @@ class Opt:
 
     def data_setting(self):
         # self.data_folder = './data/training/'
-        self.data_folder = '../data/training/'
+        self.data_folder = './training/'
         self.train_files = self.data_folder + 'train_files_list.txt'
         self.test_files = self.data_folder + 'test_files_list.txt'
         self.train_folder = '../data/train/'
@@ -59,7 +59,7 @@ class Opt:
         self.all_file_base_name = '../data/allrecord'
         self.gen_new_npy = False
         self.split = True
-        self.data_folder = '../data/training/'
+        self.data_folder = './training/'
 
         self.train_files = self.data_folder + 'train_files_list.txt'
         self.test_files = self.data_folder + 'test_files_list.txt'
@@ -104,7 +104,8 @@ class Opt:
 
         self.all_sensor_unit = {'II': 'mV', 'V': 'mV', 'PLETH': 'NU', 'aVF': 'mV', 'ABP': 'mmHg', 'RESP': 'NU',
                                 'III': 'mV', 'MCL': 'mV', 'I': 'mV', 'aVR': 'mV', 'aVL': 'mV'}
-        self.all_sensor_name = ['I', 'II', 'III', 'V', 'aVL', 'aVR', 'aVF', 'RESP', 'PLETH', 'MCL', 'ABP']
+        self.all_sensor_name = ['I', 'II', 'III', 'V',
+                                'aVL', 'aVR', 'aVF', 'RESP', 'PLETH', 'MCL', 'ABP']
         self.all_alarm_type = ['Ventricular_Tachycardia', 'Tachycardia', 'Ventricular_Flutter_Fib', 'Bradycardia',
                                'Asystole']
         self.all_alarm_id = {'Ventricular_Tachycardia': [1, 0, 0, 0, 0], 'Tachycardia': [0, 1, 0, 0, 0],

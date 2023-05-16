@@ -7,8 +7,8 @@ from sys import exit
 
 plt.rc('font', family='Times New Roman')
 if __name__ == "__main__":
-    sig1 = load_record('./a103l')
-    sig2 = load_record('./a109l')
+    sig1 = load_record('./visualization/a103l')
+    sig2 = load_record('./visualization/a109l')
     eeg = sig1.p_signal[:, 0].T[71250:75000]
     pleth = sig1.p_signal[:, 2].T[71250:75000]
     abp = sig2.p_signal[:, 2].T[71250:75000]

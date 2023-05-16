@@ -16,7 +16,7 @@ class DGCN(nn.Module):
             opt=None
     ):
         super(DGCN, self).__init__()
-        self.opt = opt
+        self.opt = opt or Opt()
 
         if self.opt.stride_before_pool:
             conv_stride = self.opt.pool_stride
@@ -123,6 +123,6 @@ if __name__ == "__main__":
 
     opt = Opt()
     opt.input_nc = 5
-    opt.cuda = False
-    model = DGCN(opt).cpu()
-    summary(model, (5, 3750), device='cpu')
+    opt.cuda = True
+    model = DGCN(opt).cuda()
+    summary(model, (5, 3750), device='cuda')

@@ -123,9 +123,9 @@ def validtest():
     opt.cuda = False
 
     from data_loader.data_read_utils import load_file, get_record_label
-    filelist = load_file("../data/training/RECORDS",
-                         "../data/training/")
-    init_data_dict("../data/training/")
+    filelist = load_file("./training/RECORDS",
+                         "./training/")
+    init_data_dict("./training/")
     all_res = {'ALL': []}
     base_path = './checkpoints/cv_edgcn_all_12s_slice/'
     for record in filelist:

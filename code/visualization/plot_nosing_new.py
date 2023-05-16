@@ -39,10 +39,10 @@ def sin_gaussion_noise(sig, fz=50, factor='default', sigma='default'):
 
 
 if __name__ == '__main__':
-    sig1 = load_record('./a103l')
-    sig2 = load_record('./a109l')
+    sig1 = load_record('./visualization/a103l')
+    sig2 = load_record('./visualization/a109l')
     # 取5s数据演示添加噪声
-    ecg = sig1.p_signal[:, 0].T[73750:75000]
+    ecg = sig2.p_signal[:, 0].T[73750:75000]
 
     y_ticks = 'Amplitude(mV)'
 

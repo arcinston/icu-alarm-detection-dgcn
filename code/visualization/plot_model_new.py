@@ -53,7 +53,7 @@ def get_data_min_max(data1, data2, data3, data4, data5):
     return data_min, data_max
 
 
-def plot_model(data_path="./"):
+def plot_model(data_path="./visualization"):
     dgcn_15s, dgcn_12s, dgcn_12s_norm, dgcn_12s_noise, dgcn_12s_norm_noise = read_data(data_path, model_name='DGCN')
     edgcn_15s, edgcn_12s, edgcn_12s_norm, edgcn_12s_noise, edgcn_12s_norm_noise = read_data(data_path,
                                                                                             model_name='EDGCN')

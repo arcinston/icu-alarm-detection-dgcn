@@ -59,12 +59,13 @@ def run_cross_val_exp(opt, alarm_type='all', explict_sensor=True, exp_name='all'
                       "4_fold_test_files_list.txt", "5_fold_test_files_list.txt"]
     res_dict = {}
     for i in range(5):
+        log.info("value of i is %d", i)
         opt.train_files = opt.data_folder + train_datapaths[i]
         opt.test_files = opt.data_folder + test_datapaths[i]
         ename = exp_name + "/" + str(i + 1)
+        log.info("exp name is %s", ename)
         run_exp_on_wfdb_dataset(opt, alarm_type, explict_sensor, ename)
         base_path = '../results/checkpoints/' + ename
-
         print(base_path)
         res = single_combined_element_exp(base_path + "/best.pth", opt.load_sensor_names, opt,
                                           explict_sensor=explict_sensor, alarm_type=alarm_type)
@@ -85,7 +86,8 @@ def run_exp_all(opt):
     run_exp_on_wfdb_dataset(opt, alarm_type='all', explict_sensor=True)
     for alarm in opt.all_alarm_type:
         run_exp_on_wfdb_dataset(opt, alarm_type=alarm, explict_sensor=True)
-    opt.load_sensor_names = ['I', 'II', 'III', 'V', 'aVL', 'aVR', 'aVF', 'RESP', 'PLETH', 'MCL', 'ABP']
+    opt.load_sensor_names = ['I', 'II', 'III', 'V',
+                             'aVL', 'aVR', 'aVF', 'RESP', 'PLETH', 'MCL', 'ABP']
     run_exp_on_wfdb_dataset(opt, alarm_type='all', explict_sensor=False)
     for alarm in opt.all_alarm_type:
         run_exp_on_wfdb_dataset(opt, alarm_type=alarm, explict_sensor=False)
@@ -94,7 +96,8 @@ def run_exp_all(opt):
 
 def single_exp(dataset, opt, exp_name):
     opt.n_classes = 2
-    opt.input_nc = len(opt.load_sensor_names) if not opt.load_important_sig else 1
+    opt.input_nc = len(
+        opt.load_sensor_names) if not opt.load_important_sig else 1
     opt.input_length = opt.window_size
     if opt.use_extra:
         opt.extra_length = dataset.get_extro_len()
@@ -108,11 +111,11 @@ def single_exp(dataset, opt, exp_name):
     model_constraint = MaxNormDefaultConstraint()
 
     if opt.use_extra:
-        loss_function = lambda preds, targets: F.nll_loss(th.squeeze(preds, dim=1),
-                                                          targets)
+        def loss_function(preds, targets): return F.nll_loss(th.squeeze(preds, dim=1),
+                                                             targets)
     else:
-        loss_function = lambda preds, targets: F.nll_loss(th.squeeze(preds, dim=2),
-                                                          targets)
+        def loss_function(preds, targets): return F.nll_loss(th.squeeze(preds, dim=2),
+                                                             targets)
     do_early_stop = True
     stop_criterion = Or([MaxEpochs(opt.max_epoch),
                          NoIncrease('ALL_train_ACC', opt.max_increase_epoch)])
@@ -224,7 +227,6 @@ def exp_single_model_cross_val(model_name='dgcn', alarm_type='all'):
 
 
 def tmp_dgcn():
-    # 12s slice, 0-1, nosing
     opt = gen_options("dgcn", True, True, True, False)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     run_cross_val_exp(opt, alarm_type="all", explict_sensor=False,
@@ -233,22 +235,7 @@ def tmp_dgcn():
 
 
 def tmp_edgcn():
-    # # 15s
-    # opt = gen_options("edgcn", False, False, False, False)
-    # opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
-    # run_cross_val_exp(opt, alarm_type="all", explict_sensor=False,
-    #                   exp_name="cv_edgcn_all_15s")
-    # # 12s slice
-    # opt = gen_options("edgcn", True, False, False, False)
-    # opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
-    # run_cross_val_exp(opt, alarm_type="all", explict_sensor=False,
-    #                   exp_name="cv_edgcn_all_12s_slice")
-    # # 12s slice noise
-    # opt = gen_options("edgcn", True, False, True, False)
-    # opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
-    # run_cross_val_exp(opt, alarm_type="all", explict_sensor=False,
-    #                   exp_name="cv_edgcn_all_12s_slice_nosing")
-    # 12s slice norm noise
+
     opt = gen_options("edgcn", True, True, True, False)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     run_cross_val_exp(opt, alarm_type="all", explict_sensor=False,
@@ -310,7 +297,8 @@ def run_exp_on_combined_model(opt, model='edgcn', exp_name='all'):
             ename = 'ECG'
         else:
             opt.load_sensor_names = sensors
-            ename = sensors[0] if len(sensors) == 1 else ''.join([c[0] for c in sensors])
+            ename = sensors[0] if len(sensors) == 1 else ''.join(
+                [c[0] for c in sensors])
 
         run_cross_val_exp(opt, alarm_type='all', explict_sensor=explict_sensor,
                           exp_name="Combined_" + model + '_' + exp_name + '/' + ename)
@@ -318,7 +306,8 @@ def run_exp_on_combined_model(opt, model='edgcn', exp_name='all'):
     res_dict = {}
     for i in range(5):
         opt.test_files = opt.data_folder + opt.test_datapaths[i]
-        res = run_exp_combined_edgcn(opt, '../results/checkpoints/' + "Combined_" + model + '_' + exp_name + '/', 'all', i)
+        res = run_exp_combined_edgcn(
+            opt, '../results/checkpoints/' + "Combined_" + model + '_' + exp_name + '/', 'all', i)
         for r in range(len(res)):
             alarm = res[r][0]
             if alarm not in res_dict:
@@ -329,20 +318,20 @@ def run_exp_on_combined_model(opt, model='edgcn', exp_name='all'):
 
 
 def exp_combined_model_cross_val(model='edgcn'):
-    opt = gen_options(model, False, False, False, False)
-    run_exp_on_combined_model(opt, model, "15s")
+    # opt = gen_options(model, False, False, False, False)
+    # run_exp_on_combined_model(opt, model, "15s")
 
-    opt = gen_options(model, False, True, False, False)
-    run_exp_on_combined_model(opt, model, "15s_norm")
+    # opt = gen_options(model, False, True, False, False)
+    # run_exp_on_combined_model(opt, model, "15s_norm")
 
-    opt = gen_options(model, True, False, False, False)
-    run_exp_on_combined_model(opt, model, "12s_slice")
+    # opt = gen_options(model, True, False, False, False)
+    # run_exp_on_combined_model(opt, model, "12s_slice")
 
-    opt = gen_options(model, True, True, False, False)
-    run_exp_on_combined_model(opt, model, "12s_slice_norm")
-    #
-    opt = gen_options(model, True, False, True, False)
-    run_exp_on_combined_model(opt, model, "12s_slice_nosing")
+    # opt = gen_options(model, True, True, False, False)
+    # run_exp_on_combined_model(opt, model, "12s_slice_norm")
+    
+    # opt = gen_options(model, True, False, True, False)
+    # run_exp_on_combined_model(opt, model, "12s_slice_nosing")
 
     opt = gen_options(model, True, True, True, False)
     run_exp_on_combined_model(opt, model, "12s_slice_norm_nosing")
@@ -350,7 +339,6 @@ def exp_combined_model_cross_val(model='edgcn'):
 
 
 if __name__ == '__main__':
-    # 设置Log格式
     logging.basicConfig(format='%(asctime)s %(levelname)s : %(message)s',
                         level=logging.DEBUG, stream=sys.stdout)
 

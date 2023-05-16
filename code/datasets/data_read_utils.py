@@ -528,8 +528,8 @@ def chect_dataset():
     test_datapaths = ["1_fold_test_files_list.txt", "2_fold_test_files_list.txt", "3_fold_test_files_list.txt",
                       "4_fold_test_files_list.txt", "5_fold_test_files_list.txt"]
     for i in range(5):
-        train_files = load_file('../data/training/' + train_datapaths[i], '../data/training/')
-        test_files = load_file('../data/training/' + test_datapaths[i], '../data/training/')
+        train_files = load_file('./training/' + train_datapaths[i], './training/')
+        test_files = load_file('./training/' + test_datapaths[i], './training/')
         print(len(train_files), len(test_files))
         files = set(train_files)
         for f in test_files:
@@ -540,7 +540,7 @@ def chect_dataset():
 
 
 if __name__ == "__main__":
-    data_folder = '../data/training/'
+    data_folder = './training/'
 
     import wfdb
 
@@ -562,7 +562,7 @@ if __name__ == "__main__":
 
     # test_check_valid_channel()
     #
-    root_path = '../data/training/'
+    root_path = './training/'
     # print(stat_data(root_path))
     pid = 'a103l'
     # split_dataset(root_path)

@@ -283,7 +283,7 @@ class Experiment(object):
         row_dict = OrderedDict()
         for m in self.monitors:
             row_dict.update(result_dicts_per_monitor[m])
-        self.epochs_df = self.epochs_df.append(row_dict, ignore_index=True)
+        self.epochs_df = self.epochs_df._append(row_dict, ignore_index=True)
         assert set(self.epochs_df.columns) == set(row_dict.keys()), (
             "Columns of dataframe: {:s}\n and keys of dict {:s} not same"
         ).format(str(set(self.epochs_df.columns)), str(set(row_dict.keys())))

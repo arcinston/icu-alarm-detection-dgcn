@@ -163,7 +163,8 @@ def eval_on_single_people(inputs, extra, model, cuda=False):
             extra_vars = extra_vars.cuda() if cuda else extra_vars
         if cuda:
             input_vars = input_vars.cuda()
-        outputs = model(input_vars) if not np.any(extra) else model(input_vars, extra_vars)
+        outputs = model(input_vars) if not np.any(
+            extra) else model(input_vars, extra_vars)
         res = th.exp(outputs)
         if hasattr(res, "cpu"):
             res = res.cpu().detach().numpy()
@@ -178,7 +179,8 @@ def single_exp(opt, explict_sensor=False, alarm_type='all', exist_model_path=Non
     dataset = load_dataset(opt, alarm_type, explict_sensor=explict_sensor)
 
     opt.n_classes = 2
-    opt.input_nc = len(opt.load_sensor_names) if not opt.load_important_sig else 1
+    opt.input_nc = len(
+        opt.load_sensor_names) if not opt.load_important_sig else 1
 
     opt.input_length = opt.window_size
     if opt.use_extra:
@@ -197,7 +199,8 @@ def predict(opt, datasets, model, alarm_type='all', cuda=False, test_people_pred
         test_people_labels = defaultdict(int)
         test_people_alarm = defaultdict(int)
     for file in datasets.need_test_files:
-        inputs, extra, targets = datasets.get_people(file, alarm_type=alarm_type, check=True)
+        inputs, extra, targets = datasets.get_people(
+            file, alarm_type=alarm_type, check=True)
 
         if np.all(inputs) is None:
             continue
@@ -228,8 +231,10 @@ def single_combined_element_exp(model_path, signame, opt, explict_sensor=True, a
     if test_people_labels is None:
         return None
     test_people_preds = confuse_results(test_people_preds)
-    list_preds, list_labels, list_alarm = results_dict_to_list(test_people_preds, test_people_labels, test_people_alarm)
+    list_preds, list_labels, list_alarm = results_dict_to_list(
+        test_people_preds, test_people_labels, test_people_alarm)
     res = score(list_preds, list_labels, list_alarm)
+    log.info("Single element exp: got res")
     return res
 
 
@@ -246,7 +251,8 @@ def results_dict_to_list(preds: dict, labels: dict, alarm_type: dict):
 
 def all_res_log(all_res, exp_name):
     tb = pt.PrettyTable()
-    tb.field_names = ['Set', 'Alarm', 'Nums', 'TP', 'TN', 'FP', 'FN', 'ACC', 'TPR', 'TNR', 'Ref_score', 'Score']
+    tb.field_names = ['Set', 'Alarm', 'Nums', 'TP', 'TN',
+                      'FP', 'FN', 'ACC', 'TPR', 'TNR', 'Ref_score', 'Score']
     with open('../results/'+exp_name.replace('/', '_') + '_test_.txt', 'a+') as log_file:
         for alarm, value in all_res.items():
             stb = pt.PrettyTable()
@@ -261,7 +267,8 @@ def all_res_log(all_res, exp_name):
             tmp = tmp.sum(axis=0)
             a, tp, tn, fp, fn = tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]
             acc, tpr, tnr, ref_score, sc = compute_score(tp, fp, tn, fn)
-            tb.add_row([exp_name, alarm, a, tp, tn, fp, fn, acc, tpr, tnr, ref_score, sc])
+            tb.add_row([exp_name, alarm, a, tp, tn, fp,
+                       fn, acc, tpr, tnr, ref_score, sc])
             time_str = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
 
         print(tb)
@@ -291,7 +298,8 @@ def run_cross_val_exp(opt, alarm_type='all', explict_sensor=True, exp_name='all'
         tmp = np.array(value)[:, 0:5].astype(np.int)
         a, tp, tn, fp, fn = tmp.sum(axis=0)
         acc, tpr, tnr, ref_score, sc = compute_score(tp, fp, tn, fn)
-        new_avg_result.append([a, tp, tn, fp, fn, acc, tpr, tnr, ref_score, sc])
+        new_avg_result.append(
+            [a, tp, tn, fp, fn, acc, tpr, tnr, ref_score, sc])
     return new_avg_result
 
 
@@ -359,7 +367,8 @@ def get100_150_epoch_avg_score(opt, alarm_type='all', explict_sensor=False, exp_
             break
         count += 1
         res.append(r[:])
-        write_csv_file("./avg_scores/" + opt.model_name + exp_name + ".csv", [str(i)] + [str(v) for v in r])
+        write_csv_file("./avg_scores/" + opt.model_name +
+                       exp_name + ".csv", [str(i)] + [str(v) for v in r])
         print(exp_name, r)
     if count == 0:
         return
@@ -369,8 +378,10 @@ def get100_150_epoch_avg_score(opt, alarm_type='all', explict_sensor=False, exp_
     a, tp, fp, tn, fn = tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]
     acc, tpr, tnr, ref_score, sc = compute_score(tp, fp, tn, fn)
     tb = pt.PrettyTable()
-    tb.field_names = ['Set', 'Nums', 'TP', 'FP', 'TN', 'FN', 'ACC', 'TPR', 'TNR', 'Ref_score', 'Score']
-    tb.add_row([opt.model_name + exp_name, a, tp, fp, tn, fn, acc, tpr, tnr, ref_score, sc])
+    tb.field_names = ['Set', 'Nums', 'TP', 'FP', 'TN',
+                      'FN', 'ACC', 'TPR', 'TNR', 'Ref_score', 'Score']
+    tb.add_row([opt.model_name + exp_name, a, tp, fp,
+               tn, fn, acc, tpr, tnr, ref_score, sc])
     print(tb)
     with open("./avg_scores/" + opt.model_name + exp_name + ".csv", 'a+') as log_file:
         log_file.writelines('\n')
@@ -383,44 +394,51 @@ def exp_cross_val(model_name='deep_modified', prefix='dgcn', combined=False):
     if not combined:
         prefix = '_' + prefix
     # 15s
-    opt = gen_options(model_name, use_slice=False, use_norm=False, use_noise=False, use_gnorm=False)
+    opt = gen_options(model_name, use_slice=False,
+                      use_norm=False, use_noise=False, use_gnorm=False)
     print(opt.model_name)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     get100_150_epoch_avg_score(opt, explict_sensor=False, exp_name=prefix + "_15s",
                                combined=combined)
 
     # 15s 0-1
-    opt = gen_options(model_name, use_slice=False, use_norm=True, use_noise=False, use_gnorm=False)
+    opt = gen_options(model_name, use_slice=False,
+                      use_norm=True, use_noise=False, use_gnorm=False)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     get100_150_epoch_avg_score(opt, explict_sensor=False, exp_name=model_name + "_" + prefix + "_15s_norm",
                                combined=combined)
 
     # 12s slice
-    opt = gen_options(model_name, use_slice=True, use_norm=False, use_noise=False, use_gnorm=False)
+    opt = gen_options(model_name, use_slice=True,
+                      use_norm=False, use_noise=False, use_gnorm=False)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     get100_150_epoch_avg_score(opt, explict_sensor=False, exp_name=prefix + "_12s_slice",
                                combined=combined)
 
     # 12s slice, 0-1
-    opt = gen_options(model_name, use_slice=True, use_norm=True, use_noise=False, use_gnorm=False)
+    opt = gen_options(model_name, use_slice=True,
+                      use_norm=True, use_noise=False, use_gnorm=False)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     get100_150_epoch_avg_score(opt, explict_sensor=False, exp_name=prefix + "_12s_slice_norm",
                                combined=combined)
 
     # 12s slice, nosing
-    opt = gen_options(model_name, use_slice=True, use_norm=False, use_noise=True, use_gnorm=False)
+    opt = gen_options(model_name, use_slice=True,
+                      use_norm=False, use_noise=True, use_gnorm=False)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     get100_150_epoch_avg_score(opt, explict_sensor=False, exp_name=prefix + "_12s_slice_nosing",
                                combined=combined)
 
     # 12s slice, 0-1, nosing
-    opt = gen_options(model_name, use_slice=True, use_norm=True, use_noise=True, use_gnorm=False)
+    opt = gen_options(model_name, use_slice=True,
+                      use_norm=True, use_noise=True, use_gnorm=False)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     get100_150_epoch_avg_score(opt, explict_sensor=False, exp_name=prefix + "_12s_slice_norm_nosing",
                                combined=combined)
 
     # 12s slice, nosing
-    opt = gen_options(model_name, use_slice=True, use_norm=False, use_noise=False, use_gnorm=True)
+    opt = gen_options(model_name, use_slice=True,
+                      use_norm=False, use_noise=False, use_gnorm=True)
     opt.load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
     get100_150_epoch_avg_score(opt, explict_sensor=False, exp_name=prefix + "_12s_slice_gnorm",
                                combined=combined)
@@ -439,7 +457,8 @@ def run_exp_combined_edgcn(opt, model_path, alarm_type='all', fold=-1):
             ename = 'ECG'
         else:
             opt.load_sensor_names = sensors
-            ename = sensors[0] if len(sensors) == 1 else ''.join([c[0] for c in sensors])
+            ename = sensors[0] if len(sensors) == 1 else ''.join(
+                [c[0] for c in sensors])
             if len(sensors) > 1:
                 explict_sensor = False
         # if alarm_type != 'all':
@@ -455,7 +474,8 @@ def run_exp_combined_edgcn(opt, model_path, alarm_type='all', fold=-1):
             return None
         opt.load_important_sig = False
     test_people_preds = confuse_results(test_people_preds)
-    list_preds, list_labels, list_alarm = results_dict_to_list(test_people_preds, test_people_labels, test_people_alarm)
+    list_preds, list_labels, list_alarm = results_dict_to_list(
+        test_people_preds, test_people_labels, test_people_alarm)
     res = score(list_preds, list_labels, list_alarm)
     return res
 
@@ -476,7 +496,8 @@ def run_exp_on_combined_model(opt, alarm_type='all', exp_name='all', model_name=
         tmp = np.array(res_all[i])[:, 1:6].astype(np.int)
         a, tp, fp, tn, fn = tmp.sum(axis=0)
         acc, tpr, tnr, ref_score, sc = compute_score(tp, fp, tn, fn)
-        new_avg_result.append([a, tp, fp, tn, fn, acc, tpr, tnr, ref_score, sc])
+        new_avg_result.append(
+            [a, tp, fp, tn, fn, acc, tpr, tnr, ref_score, sc])
     return new_avg_result
 
 

@@ -58,7 +58,7 @@ class EDGCN(nn.Module):
             conv_stride = 1
             pool_stride = self.pool_time_stride
 
-        conv_chans = self.n_filters_time * self.in_chans
+        conv_chans = self.n_filters_time * torch.tensor(self.in_chans)
 
         self.conv_time = nn.Conv1d(self.in_chans, conv_chans,
                                    kernel_size=self.filter_time_length, stride=conv_stride, groups=self.in_chans)
@@ -215,5 +215,5 @@ if __name__ == "__main__":
     model = EDGCN(5, 2, input_time_length=3000,
                   extra_length=5,
                   n_filters_time=8,
-                  final_conv_length="auto", drop_prob=0.8).cpu()
-    summary(model, [(5, 3000), (5,)], device='cpu')
+                  final_conv_length="auto", drop_prob=0.8).cuda()
+    summary(model, [(5, 3000), (5,)], device='cuda')

@@ -11,7 +11,6 @@ load_sensor_names = ['II', 'V', 'RESP', 'PLETH', 'ABP']
 
 
 def fill_nan(signal):
-    '''Solution provided by Divakar.'''
     mask = np.isnan(signal)
     idx = np.where(~mask.T, np.arange(mask.shape[0]), 0)
     np.maximum.accumulate(idx, axis=1, out=idx)
@@ -21,7 +20,6 @@ def fill_nan(signal):
 
 def load_data(filename):
     record = wfdb.rdrecord(filename)
-    # 获取信号采样率
     fs = int(record.fs)
     sensor = record.sig_name
     SECOND_LENGTH = 15
@@ -56,22 +54,30 @@ input_time_length = 15 * 250
 
 def load_model(path):
     import torch
-    model = DGCN(n_chans, 2,
-                 input_time_length=input_time_length,
-                 n_filters_time=15,
-                 final_conv_length="auto", drop_prob=0.3, stride_before_pool=False)
+    model = DGCN()
     model.load_state_dict(torch.load(path))
     return model
 
 
+def prepare_input(input_data):
+    # Scale the input data to the range [0, 1]
+    input_data = (input_data - np.min(input_data)) / (np.max(input_data) - np.min(input_data))
+    # Convert the input data to a PyTorch tensor
+    input_tensor = torch.from_numpy(input_data).float()
+    # Add a batch dimension to the tensor
+    input_tensor = input_tensor.unsqueeze(0)
+    return input_tensor
+
 if __name__ == "__main__":
-    load_data('./data/training/training/a103l')
-    model_path = './checkpoints/latest/all_4_latest.pth'
+    data_path = './data/training/training/a103l'
+    model_path = './checkpoints/latest/best.pth'
     model = load_model(model_path)
+    data = load_data(data_path)
     fp = open("answers.txt", "a+", encoding="utf-8")
     for record in sys.argv[1:]:
         output_file = os.path.basename(record)
-        data = load_data(record)
-        results = model.predict(data)
+        input_data = load_data(record)
+        input_tensor = prepare_input(input_data)
+        results = predict(model, input_tensor)
         fp.write(output_file + "," + str(results) + "\n")
     fp.close()

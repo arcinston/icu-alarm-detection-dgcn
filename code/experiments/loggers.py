@@ -23,7 +23,7 @@ class Printer(Logger):
         i_epoch = len(epochs_df) - 1
         log.info("Epoch {:d}".format(i_epoch))
         last_row = epochs_df.iloc[-1]
-        for key, val in last_row.iteritems():
+        for key, val in last_row.items():
             log.info("{:25s} {:.5f}".format(key, val))
         log.info("")
 
@@ -44,7 +44,7 @@ class PrinterTable(Logger):
         h_id, r_id = 2, 1
         self.header['Alarm'] = 0
         self.header["Set"] = 1
-        for key, val in last_row.iteritems():
+        for key, val in last_row.items():
             labels = key.split('_')
             if (labels[0], labels[1]) not in self.row:
                 self.row[(labels[0], 'train')] = r_id
@@ -81,7 +81,7 @@ class PrinterTable(Logger):
         i_epoch = len(epochs_df) - 1
         log.info("Epoch {:d}".format(i_epoch))
         last_row = epochs_df.iloc[-1]
-        for key, val in last_row.iteritems():
+        for key, val in last_row.items():
             if isinstance(val, float):
                 val = round(val, 4)
             labels = key.split('_')
@@ -125,7 +125,7 @@ class PrinterCSVFile(Logger):
         self.header['Epoch'] = 0
         self.header['Alarm'] = 1
         self.header["Set"] = 2
-        for key, val in last_row.iteritems():
+        for key, val in last_row.items():
             labels = key.split('_')
             if (labels[0], labels[1]) not in self.row:
                 self.row[(labels[0], 'train')] = r_id
@@ -162,7 +162,7 @@ class PrinterCSVFile(Logger):
         i_epoch = len(epochs_df) - 1
         log.info("Epoch {:d}".format(i_epoch))
         last_row = epochs_df.iloc[-1]
-        for key, val in last_row.iteritems():
+        for key, val in last_row.items():
             if isinstance(val, float):
                 val = round(val, 4)
             labels = key.split('_')
@@ -206,7 +206,7 @@ class TensorboardWriter(Logger):
         # -1 due to doing one monitor at start of training
         i_epoch = len(epochs_df) - 1
         last_row = epochs_df.iloc[-1]
-        for key, val in last_row.iteritems():
+        for key, val in last_row.items():
             info = key.split('_')
             val = last_row[key]
             if info[0] == 'test':

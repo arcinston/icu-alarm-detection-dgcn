@@ -10,7 +10,7 @@ class DeeperEDGCN(nn.Module):
 
     def __init__(
             self,
-            opt=None
+            opt=Opt()
     ):
         super(DeeperEDGCN, self).__init__()
         self.opt = opt

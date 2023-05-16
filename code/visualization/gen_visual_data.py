@@ -2,12 +2,16 @@
 # -*- coding: utf-8 -*-
 import csv
 import sys
+sys.path.append('../models')
+sys.path.append('../datasets')
+sys.path.append('../options')
+
 from sys import exit
 import os
 import numpy as np
 import torch
 
-from entry.data_loader.data_read_utils import get_record_label
+# from submit_entry.data_loader.data_read_utils import get_record_label
 from models.model_loader import load_model as model_loader
 import itertools
 from datasets.data_loader import DataLoader
@@ -39,7 +43,8 @@ def load_model(path, opt):
         model.cuda()
         model.load_state_dict(torch.load(path))
     else:
-        model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
+        model.load_state_dict(torch.load(
+            path, map_location=torch.device('cpu')))
     model.eval()
     return model
 
@@ -75,7 +80,8 @@ def eval_on_single_people(inputs, extra, model, cuda=False):
         if cuda:
             input_vars = input_vars.cuda()
 
-        outputs = model(input_vars) if not np.any(extra) else model(input_vars, extra_vars)
+        outputs = model(input_vars) if not np.any(
+            extra) else model(input_vars, extra_vars)
         outputs = torch.exp(outputs)
         if hasattr(outputs, "cpu"):
             outputs = outputs.cpu().detach().numpy()
@@ -165,7 +171,8 @@ def predict_testfile(opt, alarm_type='all', explict_sensor=True, base_path=None,
     if not dataset:
         return
     opt.n_classes = 2
-    opt.input_nc = len(opt.load_sensor_names) if not opt.load_important_sig else 1
+    opt.input_nc = len(
+        opt.load_sensor_names) if not opt.load_important_sig else 1
     opt.input_length = opt.window_size
     if opt.use_extra:
         opt.extra_length = dataset.get_extro_len()
@@ -253,16 +260,17 @@ def ptest():
     opt.use_extra = True
     opt.add_noise_prob = 0
 
-    opt.data_folder = 'H:/ecgdecode/data/training/'
-    opt.train_files = 'H:/ecgdecode/data/training/test_files_list.txt'
-    opt.test_files = 'H:/ecgdecode/data/training/RECORDS'
+    opt.data_folder = './training/'
+    opt.train_files = './training/test_files_list.txt'
+    opt.test_files = './training/RECORDS'
 
     opt.cuda = True
-    init_data_dict("H:/ecgdecode/data/training/")
+    init_data_dict("./training/")
     init_load_data(opt, combined=True)
     for k in range(0, 401):
         print("model: " + str(k) + ".pth")
-        predict_combined(opt, base_path='../checkpoints/Combined_edgcn_15s/', model_name=str(k) + ".pth")
+        predict_combined(
+            opt, base_path='../checkpoints/Combined_edgcn_15s/', model_name=str(k) + ".pth")
         # predict_edgcn(opt, base_path='../checkpoints/cv_dgcn_all_15s/', model_name=str(k) + ".pth")
         # predict_dgcn(opt, base_path='../checkpoints/cv_dgcn_all_12s_slice_norm_nosing/', model_name=str(k) + ".pth")
         s = compute_score()
@@ -272,7 +280,8 @@ def ptest():
         tb = pt.PrettyTable()
         res = [str(k), str(tp + tn + fp + fn), str(tp), str(fp), str(tn), str(fn), str(tpr), str(tnr), str(acc),
                str(auc), str(score)]
-        tb.field_names = ['Iteration', 'Nums', 'TP', 'FP', 'TN', 'FN', 'TPR', 'TNR', 'ACC', 'AUC', 'Score']
+        tb.field_names = ['Iteration', 'Nums', 'TP', 'FP',
+                          'TN', 'FN', 'TPR', 'TNR', 'ACC', 'AUC', 'Score']
         tb.add_row(res)
         write_csv_file("Combined_3750.csv", res)
         print(tb)
@@ -311,8 +320,8 @@ def clear():
 
 
 if __name__ == "__main__":
-    ptest()
-    exit(0)
+    # ptest()
+    # exit(0)
     opt = Opt()
     opt.drop_prob = 0.3
     opt.use_minmax_scale = False
