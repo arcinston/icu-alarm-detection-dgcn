@@ -279,7 +279,7 @@ def exp_combined():
         opt.drop_prob = 0.3
         opt.load_important_sig = True
         opt.use_minmax_scale = True
-        opt.model_name = 'edgcn'  # 'edgcn'这里需要再训练
+        opt.model_name = 'edgcn'  
         opt.use_extra = True
         opt.add_noise_prob = 0
         opt.window_size = 3750
